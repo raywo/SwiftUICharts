@@ -82,6 +82,11 @@ struct BarsView: View {
     round(max + max * 0.15, toNearest: 5)
   }
   
+  private var offsetToMax: CGFloat {
+    maxAxisLabelValue - max
+  }
+  
+  // MARK: - functions
   private func barView(for point: DataPoint,
                        index: Int,
                        in geometry: GeometryProxy) -> some View {
@@ -106,10 +111,6 @@ struct BarsView: View {
         .frame(height: CGFloat((point.endValue-point.startValue) / max) * (geometry.size.height - topCut - offsetToMax))
         .frame(maxWidth: style.barMaxWidth)
     }
-  }
-  
-  private var offsetToMax: CGFloat {
-    maxAxisLabelValue - max
   }
   
   private func limitView(for limit: DataPoint,
