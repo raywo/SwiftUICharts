@@ -9,56 +9,11 @@
 //
 import SwiftUI
 
-/// The type that describes the group of data points in the chart.
-public struct Legend: Identifiable {
-  public let id = UUID()
-  
-  /// Color representing the legend
-  let color: Color
-  
-  /// Foreground color to be used for the legend
-  let foregroundColor: Color
-  
-  /// Localized string key representing the legend
-  let label: LocalizedStringKey
-  
-  /// Integer representing the value to sort the array of legends
-  let order: Int
-  
-  /**
-   Creates new legend with the following parameters.
-   
-   - Parameters:
-   - color: The color of the group that will be used to draw data points.
-   - foregroundColor: The foreground color that will be used to draw data points.
-   - label: LocalizedStringKey that describes the legend.
-   - order: The number that will be used to sort chart legends list. Default value is 0.
-   */
-  public init(color: Color,
-              foregroundColor: Color = .primary,
-              label: LocalizedStringKey,
-              order: Int = 0) {
-    self.color = color
-    self.foregroundColor = foregroundColor
-    self.label = label
-    self.order = order
-  }
-}
-
-extension Legend: Comparable {
-  public static func < (lhs: Self, rhs: Self) -> Bool {
-    lhs.order < rhs.order
-  }
-}
-
-extension Legend: Hashable {
-  public func hash(into hasher: inout Hasher) {
-    hasher.combine(id)
-  }
-}
 
 /// The type that describes a data point in the chart.
-public struct DataPoint {
+public struct DataPoint<BaseData>: Identifiable {
+  public let id: UUID = UUID()  
+  
   /// Starting point of a bar (used only in the ``BarChartView``)
   public let startValue: Double
   
@@ -71,48 +26,71 @@ public struct DataPoint {
   /// ``Legend`` value representing the data point
   public let legend: Legend
   
-  /// Swift.Bool value controlling the visibility of the data point in the chart
+  /// Boolean value controlling the visibility of the data point in the chart
   public let visible: Bool
   
-  /**
-   Creates new data point with the following parameters.
-   
-   - Parameters:
-   - value: Double that represents a value of the point in the chart.
-   - label: LocalizedStringKey that describes the point.
-   - legend: The legend of data point, usually appears below the chart.
-   - visible: The boolean that controls the visibility of the data point in the chart. Default value is true.
-   */
-  public init(value: Double, label: LocalizedStringKey, legend: Legend, visible: Bool = true) {
+  /// The data this point is based upon. Can be queried when returned via the
+  /// delegate’s ``barChart(didSelectBar)`` method.
+  public var dataObject: BaseData?
+  
+  
+  /// Creates new data point with the following parameters.
+  /// - Parameters:
+  ///   - value: Double that represents a value of the point in the chart.
+  ///   - label: LocalizedStringKey that describes the point.
+  ///   - legend: The legend of data point, usually appears below the chart.
+  ///   - visible: The boolean that controls the visibility of the data point
+  ///              in the chart. Default value is true.
+  ///   - dataObject: The data this point is based upon. Can be queried when
+  ///                 returned via the delegate’s ``barChart(didSelectBar)``
+  ///                 method.
+  public init(value: Double,
+              label: LocalizedStringKey,
+              legend: Legend,
+              visible: Bool = true,
+              dataObject: BaseData? = nil) {
     self.startValue = 0
     self.endValue = value
     self.label = label
     self.legend = legend
     self.visible = visible
+    self.dataObject = dataObject
   }
   
-  /**
-   Creates new data point with the following parameters.
-   
-   - Parameters:
-   - startValue: Double that represents a start value of the point in the chart.
-   - endValue: Double that represents an end value of the point in the chart.
-   - label: LocalizedStringKey that describes the point.
-   - legend: The legend of data point, usually appears below the chart.
-   - visible: The boolean that controls the visibility of the data point in the chart. Default value is true.
-   */
-  public init(
-    startValue: Double,
-    endValue: Double,
-    label: LocalizedStringKey,
-    legend: Legend,
-    visible: Bool = true
-  ) {
+  
+  /// Creates new data point with the following parameters.
+  /// - Parameters:
+  ///   - startValue: Double that represents a start value of the point in
+  ///                 the chart.
+  ///   - endValue: Double that represents an end value of the point in
+  ///               the chart.
+  ///   - label: LocalizedStringKey that describes the point.
+  ///   - legend: The legend of data point, usually appears below the chart.
+  ///   - visible: The boolean that controls the visibility of the data point
+  ///              in the chart. Default value is true.
+  ///   - dataObject: The data this point is based upon. Can be queried when
+  ///                 returned via the delegate’s ``barChart(didSelectBar)``
+  ///                 method.
+  public init(startValue: Double,
+              endValue: Double,
+              label: LocalizedStringKey,
+              legend: Legend,
+              visible: Bool = true,
+              dataObject: BaseData? = nil) {
     self.startValue = startValue
     self.endValue = endValue
     self.label = label
     self.legend = legend
     self.visible = visible
+    self.dataObject = dataObject
+  }
+  
+}
+
+extension DataPoint: Equatable {
+  
+  public static func == (lhs: DataPoint<BaseData>, rhs: DataPoint<BaseData>) -> Bool {
+    lhs.id == rhs.id
   }
   
 }
@@ -178,7 +156,7 @@ extension DataPoint {
     return [
       .init(value: 45, label: "1", legend: low),
       .init(value: 90, label: "2", legend: warmUp),
-      .init(value: 103, label: "3", legend: fatBurning),
+      .init(value: 103.9, label: "3", legend: fatBurning),
       .init(value: 92, label: "4", legend: buildFitness),
       .init(value: 78, label: "5", legend: highIntensity),
     ]

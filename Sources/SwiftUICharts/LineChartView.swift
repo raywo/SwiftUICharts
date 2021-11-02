@@ -61,9 +61,9 @@ public struct LineChartStyle: ChartStyle {
 }
 
 /// SwiftUI view that draws data points by drawing a line.
-public struct LineChartView: View {
+public struct LineChartView<BaseData: Hashable>: View {
   @Environment(\.chartStyle) var chartStyle
-  let dataPoints: [DataPoint]
+  let dataPoints: [DataPoint<BaseData>]
   
   /**
    Creates new line chart view with the following parameters.
@@ -71,7 +71,7 @@ public struct LineChartView: View {
    - Parameters:
    - dataPoints: The array of data points that will be used to draw the bar chart.
    */
-  public init(dataPoints: [DataPoint]) {
+  public init(dataPoints: [DataPoint<BaseData>]) {
     self.dataPoints = dataPoints
   }
   
@@ -105,9 +105,12 @@ public struct LineChartView: View {
         if style.gridStyle.showAxis {
           AxisView(dataPoints: dataPoints,
                    gridLines: style.gridStyle.gridLines,
+                   roundTo: style.gridStyle.roundToNearest,
                    showLabels: style.showLabels,
                    labelsHeight: style.labelHeight,
-                   toNearest: style.gridStyle.roundToNearest)
+                   maxValue: maxValue,
+                   maxLabelValue: stepAndMaxAxisLabelValue.value,
+                   step: stepAndMaxAxisLabelValue.step)
             .accessibilityHidden(true)
             .padding(.leading, style.gridStyle.axisLeadingPadding)
         }
@@ -125,14 +128,36 @@ public struct LineChartView: View {
       }
     }
   }
+  
+  private var maxValue: Double {
+    guard let max = dataPoints.max()?.endValue, max != 0 else {
+      return 1
+    }
+    return max
+  }
+  
+  private var stepAndMaxAxisLabelValue: (step: Double, value: Double) {
+    var percentage = 0.1
+    let nearest = Double(style.gridStyle.roundToNearest)
+    let gridLines = Double(style.gridStyle.gridLines)
+    
+    if maxValue < 50 {
+      percentage = 0.5
+    }
+    
+    let suggested = round(maxValue + maxValue * percentage, toNearest: nearest)
+    let step = ceil((suggested / gridLines - 1), toNearest: nearest)
+    
+    return (step, step * gridLines)
+  }
 }
 
 #if DEBUG
 struct LineChartView_Previews: PreviewProvider {
   static var previews: some View {
     HStack {
-      LineChartView(dataPoints: DataPoint.mock)
-      LineChartView(dataPoints: DataPoint.mock)
+      LineChartView<Int>(dataPoints: DataPoint.mock)
+      LineChartView<Int>(dataPoints: DataPoint.mock)
     }.chartStyle(LineChartStyle(showLabels: false))
   }
 }
