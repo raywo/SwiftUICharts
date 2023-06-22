@@ -10,6 +10,7 @@
 
 import SwiftUI
 
+#if !os(watchOS)
 struct ChartGridView: View {
   
   let gridLines: Int
@@ -50,7 +51,7 @@ struct ChartGridView: View {
   }
 }
 
-#if DEBUG
+
 struct ChartGridView_Previews: PreviewProvider {
   static var previews: some View {
     ChartGridView(gridLines: 6, showLabels: true, labelsHeight: 22)

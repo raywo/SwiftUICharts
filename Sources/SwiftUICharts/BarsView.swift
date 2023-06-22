@@ -9,6 +9,7 @@
 //
 import SwiftUI
 
+#if !os(watchOS)
 struct BarsView<Delegate: BarChartDelegate>: View {
   let dataPoints: [DataPoint<Delegate.BaseData>]
   let limit: DataPoint<Delegate.BaseData>?
@@ -157,7 +158,7 @@ struct BarsView<Delegate: BarChartDelegate>: View {
   }
 }
 
-#if DEBUG
+
 struct BarsView_Previews: PreviewProvider {
   static var gridStyle = GridStyle(showLabels: true,
                                    everyNthLabel: nil,

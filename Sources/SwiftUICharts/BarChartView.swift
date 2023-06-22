@@ -9,7 +9,7 @@
 //
 import SwiftUI
 
-
+#if !os(watchOS)
 /// SwiftUI view that draws bars by placing them into a horizontal container.
 public struct BarChartView<Delegate: BarChartDelegate>: View {
 //  @Environment(\.chartStyle) var chartStyle
@@ -106,7 +106,7 @@ public struct BarChartView<Delegate: BarChartDelegate>: View {
   }
 }
 
-#if DEBUG
+
 struct BarChartView_Previews : PreviewProvider {
   static let limit = Legend(color: .purple, label: "Trend")
   
