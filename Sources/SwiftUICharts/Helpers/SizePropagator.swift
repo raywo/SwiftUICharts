@@ -37,9 +37,10 @@ struct SizePropagator<ID: Hashable, V: View>: View {
   }
 }
 
-
+#if !os(watchOS)
 extension View {
   public var intrinsicSize: CGSize {
     UIHostingController(rootView: self).view.intrinsicContentSize
   }
 }
+#endif
