@@ -9,6 +9,7 @@
 //
 import SwiftUI
 
+#if !os(watchOS)
 struct AxisView<BaseData>: View {
   let dataPoints: [DataPoint<BaseData>]
   let gridLines: Int
@@ -71,7 +72,7 @@ struct AxisView<BaseData>: View {
   }
 }
 
-#if DEBUG
+
 struct AxisView_Previews: PreviewProvider {
   static var dataPoints = DataPoint<Int>.mockFewData
   
