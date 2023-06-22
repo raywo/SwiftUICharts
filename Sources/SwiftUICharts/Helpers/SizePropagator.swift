@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+#if !os(watchOS)
 struct SizePreferenceData: Equatable {
   let id: AnyHashable
   let size: CGSize
@@ -37,7 +38,7 @@ struct SizePropagator<ID: Hashable, V: View>: View {
   }
 }
 
-#if !os(watchOS)
+
 extension View {
   public var intrinsicSize: CGSize {
     UIHostingController(rootView: self).view.intrinsicContentSize
