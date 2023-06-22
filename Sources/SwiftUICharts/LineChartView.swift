@@ -9,6 +9,7 @@
 //
 import SwiftUI
 
+#if !os(watchOS)
 /// Type that defines a line chart style.
 public struct LineChartStyle: ChartStyle {
   /// Minimal height for a line chart view
@@ -152,7 +153,7 @@ public struct LineChartView<BaseData: Hashable>: View {
   }
 }
 
-#if DEBUG
+
 struct LineChartView_Previews: PreviewProvider {
   static var previews: some View {
     HStack {

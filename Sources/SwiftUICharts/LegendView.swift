@@ -9,6 +9,7 @@
 //
 import SwiftUI
 
+#if !os(watchOS)
 struct LegendView<BaseData>: View {
   let legends: [Legend]
   
@@ -32,7 +33,7 @@ struct LegendView<BaseData>: View {
   }
 }
 
-#if DEBUG
+
 struct LegendView_Previews: PreviewProvider {
   static var previews: some View {
     LegendView<Int>(dataPoints: DataPoint.mock)
